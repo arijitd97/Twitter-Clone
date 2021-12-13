@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "FGv/YL48o08vBEz+SWItkJdXyCIJ/G3eD9MFDur13Ywh0dpTjSndkBuFex/jrrDjpXlPXJjmgh/J/d92INR5IQ==",
+  "success": true,
+  "projectFilePath": "/Users/Arijit/Documents/VS Code folders/F#/Twitter-Clone/Twitter/Twitter.fsproj",
+  "expectedPackageFiles": [
+    "/Users/Arijit/.nuget/packages/fsharp.core/5.0.0/fsharp.core.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
