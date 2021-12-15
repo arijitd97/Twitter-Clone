@@ -32,7 +32,7 @@ open Suave.Writers
 type ServerOps =
     | Register of string* string* WebSocket
     | Login of string* string* WebSocket
-    | Send of  string  * string * string * bool * IActorRef
+    | Send of  string  * string * string * bool
     | Subscribe of   string  * string* string 
     | ReTweet of  string  * string * string
     | Querying of  string  * string 
@@ -348,7 +348,7 @@ let GlobalActor (mailbox: Actor<_>) =
             //////
             // mailbox.Sender() <? twitter.Logout username password |> ignore
 
-        |   Send(username,password,tweetData,reTweet,spSender) -> 
+        |   Send(username,password,tweetData,reTweet) -> 
             ////////
             let mutable auth = false
             if not (usernameToUserObjMap.ContainsKey(username)) then
@@ -406,9 +406,10 @@ let GlobalActor (mailbox: Actor<_>) =
                     //res <-  "[Sendtweet][Success]: Sent "+tweet.ToString()
                     printfn "%A" hashtagToTweetMap
                     printfn "Mention to tweet%A" mentionsToTweetMap
-            if reTweet then
-                spSender <! res |>ignore
-            else mailbox.Sender() <! res |>ignore
+            // if reTweet then
+            //     spSender <! res |>ignore
+            // else mailbox.Sender() <! res |>ignore
+            mailbox.Sender() <! res |>ignore
             // res
             /// 
 
@@ -448,16 +449,16 @@ let GlobalActor (mailbox: Actor<_>) =
 
             // mailbox.Sender() <? twitter.Subscribe username password subsribeUsername |> ignore
 
-        |   ReTweet(username,password,tweetData) -> 
+        // |   ReTweet(username,password,tweetData) -> 
 
             ///////
-            let mutable fromSend:ResponseType = {Status=""; Data=""}
-            fromSend <- mailbox.Self <? Send(username,password,tweetData,true,mailbox.Sender())
-            let temp = "[retweet]" + (fromSend).Data
-            let res:ResponseType = {Status="Success"; Data=temp}
+            // let mutable fromSend:ResponseType = {Status=""; Data=""}
+            // fromSend <- mailbox.Self <? Send(username,password,tweetData,true,mailbox.Sender())
+            // let temp = "[retweet]" + (fromSend).Data
+            // let res:ResponseType = {Status="Success"; Data=temp}
             /////// 
             // let mutable res:ResponseType = {Status=""; Data=""}
-            mailbox.Self <! Send(username,password,tweetData,true,mailbox.Sender())
+            // mailbox.Self <! Send(username,password,tweetData,true)
             // mailbox.Sender() <? twitter.ReTweet  username password tweetData |> ignore
 
         |   Querying(username,password ) -> 
@@ -604,7 +605,7 @@ let ServerActor (mailbox: Actor<ServerActorMessage>) =
                 task <- globalActor <? Login(username,password,webSocket)
             else if serverOperation= "send" then
                 printfn "[send] username:%s password: %s tweetData: %s" username password tweetData
-                task <- globalActor <? Send(username,password,tweetData,false,mailbox.Self)
+                task <- globalActor <? Send(username,password,tweetData,false)
             else if serverOperation= "subscribe" then
                 printfn "[subscribe] username:%s password: %s following username: %s" username password subsribeUsername
                 task <- globalActor <? Subscribe(username,password,subsribeUsername )
@@ -613,7 +614,7 @@ let ServerActor (mailbox: Actor<ServerActorMessage>) =
                 task <- globalActor <? Querying(username,password )
             else if serverOperation= "retweet" then
                 printfn "[retweet] username:%s password: %s tweetData: %s" username password (tweetIdToTweetMap.[tweetData].Text)
-                task <- globalActor <? ReTweet(username,password,(tweetIdToTweetMap.[tweetData].Text))
+                task <- globalActor <? Send(username,password,(tweetIdToTweetMap.[tweetData].Text),true)
                 // printfn "[retweet] username:%s password: %s tweetData: %s" username password (twitter.GetTweetIdToTweetMap().[tweetData].Text)
                 // task <- globalActor <? ReTweet(username,password,(twitter.GetTweetIdToTweetMap().[tweetData].Text))
             else if serverOperation= "@" then
