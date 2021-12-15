@@ -1,42 +1,77 @@
 {
   "format": 1,
   "restore": {
-    "/Users/Arijit/Documents/VS Code folders/F#/Twitter-Clone/Twitter/Twitter.fsproj": {}
+    "/Users/meghamalagupta/Documents/VS Code/F#/Twitter-Clone/Twitter/Twitter.fsproj": {}
   },
   "projects": {
-    "/Users/Arijit/Documents/VS Code folders/F#/Twitter-Clone/Twitter/Twitter.fsproj": {
+    "/Users/meghamalagupta/Documents/VS Code/F#/Twitter-Clone/Twitter/Twitter.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/Arijit/Documents/VS Code folders/F#/Twitter-Clone/Twitter/Twitter.fsproj",
+        "projectUniqueName": "/Users/meghamalagupta/Documents/VS Code/F#/Twitter-Clone/Twitter/Twitter.fsproj",
         "projectName": "Twitter",
-        "projectPath": "/Users/Arijit/Documents/VS Code folders/F#/Twitter-Clone/Twitter/Twitter.fsproj",
-        "packagesPath": "/Users/Arijit/.nuget/packages/",
-        "outputPath": "/Users/Arijit/Documents/VS Code folders/F#/Twitter-Clone/Twitter/obj/",
+        "projectPath": "/Users/meghamalagupta/Documents/VS Code/F#/Twitter-Clone/Twitter/Twitter.fsproj",
+        "packagesPath": "/Users/meghamalagupta/.nuget/packages/",
+        "outputPath": "/Users/meghamalagupta/Documents/VS Code/F#/Twitter-Clone/Twitter/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/Arijit/.nuget/NuGet/NuGet.Config"
+          "/Users/meghamalagupta/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net5.0"
+          "netcoreapp5.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net5.0": {
-            "targetAlias": "net5.0",
+            "targetAlias": "netcoreapp5.0",
             "projectReferences": {}
           }
         }
       },
       "frameworks": {
         "net5.0": {
-          "targetAlias": "net5.0",
+          "targetAlias": "netcoreapp5.0",
           "dependencies": {
+            "Akka": {
+              "target": "Package",
+              "version": "[1.4.25, )",
+              "generatePathProperty": true
+            },
+            "Akka.FSharp": {
+              "target": "Package",
+              "version": "[1.4.25, )",
+              "generatePathProperty": true
+            },
+            "Akka.Remote": {
+              "target": "Package",
+              "version": "[1.4.25, )",
+              "generatePathProperty": true
+            },
             "FSharp.Core": {
               "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
               "target": "Package",
               "version": "[5.0.0, )",
+              "generatePathProperty": true
+            },
+            "FSharp.Json": {
+              "target": "Package",
+              "version": "[0.4.1, )",
+              "generatePathProperty": true
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )",
+              "generatePathProperty": true
+            },
+            "Suave": {
+              "target": "Package",
+              "version": "[2.6.1, )",
+              "generatePathProperty": true
+            },
+            "WebSocketSharp": {
+              "target": "Package",
+              "version": "[1.0.3-rc11, )",
               "generatePathProperty": true
             }
           },
@@ -55,7 +90,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.401/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/x64/sdk/5.0.403/RuntimeIdentifierGraph.json"
         }
       }
     }
