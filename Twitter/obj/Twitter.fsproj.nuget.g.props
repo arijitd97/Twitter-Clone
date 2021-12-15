@@ -4,18 +4,25 @@
     <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
-    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/Users/Arijit/.nuget/packages/</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/Users/Arijit/.nuget/packages/</NuGetPackageFolders>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/Users/meghamalagupta/.nuget/packages/</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/Users/meghamalagupta/.nuget/packages/</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
-    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">5.11.0</NuGetToolVersion>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">5.11.1</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="/Users/Arijit/.nuget/packages/" />
+    <SourceRoot Include="/Users/meghamalagupta/.nuget/packages/" />
   </ItemGroup>
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgFSharp_Core Condition=" '$(PkgFSharp_Core)' == '' ">/Users/Arijit/.nuget/packages/fsharp.core/5.0.0</PkgFSharp_Core>
+    <PkgWebSocketSharp Condition=" '$(PkgWebSocketSharp)' == '' ">/Users/meghamalagupta/.nuget/packages/websocketsharp/1.0.3-rc11</PkgWebSocketSharp>
+    <PkgFSharp_Core Condition=" '$(PkgFSharp_Core)' == '' ">/Users/meghamalagupta/.nuget/packages/fsharp.core/5.0.0</PkgFSharp_Core>
+    <PkgSuave Condition=" '$(PkgSuave)' == '' ">/Users/meghamalagupta/.nuget/packages/suave/2.6.1</PkgSuave>
+    <PkgNewtonsoft_Json Condition=" '$(PkgNewtonsoft_Json)' == '' ">/Users/meghamalagupta/.nuget/packages/newtonsoft.json/13.0.1</PkgNewtonsoft_Json>
+    <PkgFSharp_Json Condition=" '$(PkgFSharp_Json)' == '' ">/Users/meghamalagupta/.nuget/packages/fsharp.json/0.4.1</PkgFSharp_Json>
+    <PkgAkka Condition=" '$(PkgAkka)' == '' ">/Users/meghamalagupta/.nuget/packages/akka/1.4.25</PkgAkka>
+    <PkgAkka_Remote Condition=" '$(PkgAkka_Remote)' == '' ">/Users/meghamalagupta/.nuget/packages/akka.remote/1.4.25</PkgAkka_Remote>
+    <PkgAkka_FSharp Condition=" '$(PkgAkka_FSharp)' == '' ">/Users/meghamalagupta/.nuget/packages/akka.fsharp/1.4.25</PkgAkka_FSharp>
   </PropertyGroup>
 </Project>
