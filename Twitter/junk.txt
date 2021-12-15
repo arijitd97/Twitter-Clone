@@ -1,0 +1,40 @@
+// let GlobalActor (mailbox: Actor<_>) =
+//     let rec loop () = actor {
+//         let! msg = mailbox.Receive ()
+//         match msg with
+//         |   Register(username,password,webSocket) ->
+//             if username = "" then
+//                 return! loop()
+//             mailbox.Sender() <? twitter.Register username password webSocket|> ignore
+
+//         |   Login(username,password,webSocket) ->
+//             if username = "" then
+//                 return! loop()
+//             mailbox.Sender() <? twitter.Login username password webSocket|> ignore
+
+//         |   Logout(username,password) ->
+//             mailbox.Sender() <? twitter.Logout username password |> ignore
+
+//         |   Send(username,password,tweetData,false) -> 
+//             mailbox.Sender() <? twitter.SendTweet username password tweetData false |> ignore
+
+//         |   Subscribe(username,password,subsribeUsername) -> 
+//             mailbox.Sender() <? twitter.Subscribe username password subsribeUsername |> ignore
+
+//         |   ReTweet(username,password,tweetData) -> 
+//             mailbox.Sender() <? twitter.ReTweet  username password tweetData |> ignore
+
+//         |   Querying(username,password ) -> 
+//             mailbox.Sender() <? twitter.QueryTweetsSubscribed  username password |> ignore
+
+//         |   QueryHashTag(queryhashtag) -> 
+//             mailbox.Sender() <? twitter.QueryHashTag  queryhashtag |> ignore
+
+//         |   QueryAt(at) -> 
+//             mailbox.Sender() <? twitter.QueryMention  at |> ignore
+        
+        
+//         | _ ->  failwith "Invalid Operation "
+//         return! loop()
+//     }
+//     loop ()

@@ -77,7 +77,7 @@ let TwitterClient (mailbox: Actor<string>)=
         if operation = "Register" then
             userName <- result.[1]
             password <- result.[2]
-            let serverJson: MessageType = {OperationName = "reg"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; QueryAt = ""} 
+            let serverJson: MessageType = {OperationName = "register"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; QueryAt = ""} 
             let json = Json.serialize serverJson
             echoServer.Send json
             return! loop()  
@@ -85,8 +85,8 @@ let TwitterClient (mailbox: Actor<string>)=
             let serverJson: MessageType = {OperationName = "subscribe"; UserName = userName; Password = password; SubscribeUserName = result.[1]; TweetData = ""; Queryhashtag = ""; QueryAt = ""} 
             let json = Json.serialize serverJson
             echoServer.Send json
-        else if operation = "SendTweet" then
-            let serverJson: MessageType = {OperationName = "send"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = "tweet from "+userName+" "+result.[1]; Queryhashtag = ""; QueryAt = ""} 
+        else if operation = "Tweet" then
+            let serverJson: MessageType = {OperationName = "tweet"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = "Tweeted By "+userName+": "+result.[1]; Queryhashtag = ""; QueryAt = ""} 
             let json = Json.serialize serverJson
             echoServer.Send json
             sender <? "success" |> ignore
@@ -102,12 +102,12 @@ let TwitterClient (mailbox: Actor<string>)=
             let json = Json.serialize serverJson
             echoServer.Send json
         else if operation = "QueryHashtags" then
-            let serverJson: MessageType = {OperationName = "#"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = result.[1]; QueryAt = ""} 
+            let serverJson: MessageType = {OperationName = "hashtag"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = result.[1]; QueryAt = ""} 
             let json = Json.serialize serverJson
             echoServer.Send json
             sender <? "success" |> ignore 
         else if operation = "QueryMentions" then            
-            let serverJson: MessageType = {OperationName = "@"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag =""; QueryAt =  result.[1]} 
+            let serverJson: MessageType = {OperationName = "mention"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag =""; QueryAt =  result.[1]} 
             let json = Json.serialize serverJson
             echoServer.Send json
             sender <? "success" |> ignore 
@@ -149,9 +149,9 @@ let rec readInput () =
         let username = inpMessage.[1] 
         client <! "Subscribe,"+username
         readInput()
-    | "Send" ->
+    | "Tweet" ->
         let message = inpMessage.[1] 
-        client <! "SendTweet,"+message
+        client <! "Tweet,"+message
         readInput()
     | "Query" ->
         client <! "Querying"
