@@ -17,9 +17,7 @@ open FSharp.Json
 open WebSocketSharp
 open Akka.Configuration
 
-
-// number of user
-let configuration = 
+let config = 
     ConfigurationFactory.ParseString(
         @"akka {
             log-config-on-start : on
@@ -43,14 +41,14 @@ let configuration =
             }
         }")
 
-let system = ActorSystem.Create("TwitterSim", configuration)
-let echoServer = new WebSocket("ws://localhost:8080/websocket")
-echoServer.OnOpen.Add(fun args -> System.Console.WriteLine("Open"))
-echoServer.OnClose.Add(fun args -> System.Console.WriteLine("Close"))
-echoServer.OnMessage.Add(fun args -> System.Console.WriteLine("Msg: {0}", args.Data))
-echoServer.OnError.Add(fun args -> System.Console.WriteLine("Error: {0}", args.Message))
+let system = ActorSystem.Create("TwitterClient", config)
+let server = new WebSocket("ws://localhost:8080/websocket")
+server.OnOpen.Add(fun args -> System.Console.WriteLine("SocketOpen"))
+server.OnClose.Add(fun args -> System.Console.WriteLine("SocketClose"))
+server.OnMessage.Add(fun args -> System.Console.WriteLine("Message: {0}", args.Data))
+server.OnError.Add(fun args -> System.Console.WriteLine("Error: {0}", args.Message))
 
-echoServer.Connect()
+server.Connect()
 
 type MessageType = {
     OperationName : string
@@ -59,123 +57,122 @@ type MessageType = {
     SubscribeUserName : string
     TweetData : string
     Queryhashtag : string
-    QueryAt : string
+    Querymention : string
 }
 
 
-let TwitterClient (mailbox: Actor<string>)=
+let Client (mailbox: Actor<string>)=
     let mutable userName = ""
     let mutable password = ""
 
     let rec loop () = actor {        
         let! message = mailbox.Receive ()
         let sender = mailbox.Sender()
-        
         let result = message.Split ','
-        let operation = result.[0]
-
-        if operation = "Register" then
+        let op = result.[0]
+        match op with
+        |   "Register" ->
             userName <- result.[1]
             password <- result.[2]
-            let serverJson: MessageType = {OperationName = "register"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; QueryAt = ""} 
+            let serverJson: MessageType = {OperationName = "register"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; Querymention = ""} 
             let json = Json.serialize serverJson
-            echoServer.Send json
+            server.Send json
             return! loop()  
-        else if operation = "Subscribe" then
-            let serverJson: MessageType = {OperationName = "subscribe"; UserName = userName; Password = password; SubscribeUserName = result.[1]; TweetData = ""; Queryhashtag = ""; QueryAt = ""} 
+        |   "Subscribe" ->
+            let serverJson: MessageType = {OperationName = "subscribe"; UserName = userName; Password = password; SubscribeUserName = result.[1]; TweetData = ""; Queryhashtag = ""; Querymention = ""} 
             let json = Json.serialize serverJson
-            echoServer.Send json
-        else if operation = "Tweet" then
-            let serverJson: MessageType = {OperationName = "tweet"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = "Tweeted By "+userName+": "+result.[1]; Queryhashtag = ""; QueryAt = ""} 
+            server.Send json
+        |   "Tweet" ->
+            let serverJson: MessageType = {OperationName = "tweet"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = "Tweeted By "+userName+": "+result.[1]; Queryhashtag = ""; Querymention = ""} 
             let json = Json.serialize serverJson
-            echoServer.Send json
+            server.Send json
             sender <? "success" |> ignore
-        else if operation = "RecievedTweet" then
+        |   "RecievedTweet" ->
             printfn "[%s] : %s" userName result.[1]  
-        else if operation = "Querying" then
-            let serverJson: MessageType = {OperationName = "querying"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; QueryAt = ""} 
+        |   "QueryFeed" ->
+            let serverJson: MessageType = {OperationName = "queryfeed"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; Querymention = ""} 
             let json = Json.serialize serverJson
-            echoServer.Send json
+            server.Send json
             sender <? "success" |> ignore 
-        else if operation = "Logout" then
-            let serverJson: MessageType = {OperationName = "logout"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; QueryAt = ""} 
+        |   "Logout" ->
+            let serverJson: MessageType = {OperationName = "logout"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; Querymention = ""} 
             let json = Json.serialize serverJson
-            echoServer.Send json
-        else if operation = "QueryHashtags" then
-            let serverJson: MessageType = {OperationName = "hashtag"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = result.[1]; QueryAt = ""} 
+            server.Send json
+        |   "QueryHashtags" ->
+            let serverJson: MessageType = {OperationName = "hashtag"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = result.[1]; Querymention = ""} 
             let json = Json.serialize serverJson
-            echoServer.Send json
+            server.Send json
             sender <? "success" |> ignore 
-        else if operation = "QueryMentions" then            
-            let serverJson: MessageType = {OperationName = "mention"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag =""; QueryAt =  result.[1]} 
+        |   "QueryMentions" ->           
+            let serverJson: MessageType = {OperationName = "mention"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag =""; Querymention =  result.[1]} 
             let json = Json.serialize serverJson
-            echoServer.Send json
+            server.Send json
             sender <? "success" |> ignore 
-        else if operation = "Retweet" then            
-            let serverJson: MessageType = {OperationName = "retweet"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = result.[1]; Queryhashtag =""; QueryAt =  ""} 
+        |   "Retweet" ->            
+            let serverJson: MessageType = {OperationName = "retweet"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = result.[1]; Queryhashtag =""; Querymention =  ""} 
             let json = Json.serialize serverJson
-            echoServer.Send json
+            server.Send json
             sender <? "success" |> ignore
-        else if operation = "Login" then
+        |   "Login" ->
             userName <- result.[1]
             password <- result.[2]
-            let serverJson: MessageType = {OperationName = "login"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; QueryAt = ""} 
+            let serverJson: MessageType = {OperationName = "login"; UserName = userName; Password = password; SubscribeUserName = ""; TweetData = ""; Queryhashtag = ""; Querymention = ""} 
             let json = Json.serialize serverJson
-            echoServer.Send json 
+            server.Send json 
         return! loop()     
     }
     loop ()
 
 
-let client = spawn system ("User"+(string 1)) TwitterClient
-let rec readInput () =
-    Console.Write("Enter command: ")
+let client = spawn system ("User") Client
+let rec getOperation () =
+    // Console.Write("Enter command: ")
+    printfn "\n"
     let input = Console.ReadLine()
-    let inpMessage = input.Split ','
-    let serverOp = inpMessage.[0]
+    let msg = input.Split ','
+    let serverOp = msg.[0]
     
-    match (serverOp) with
+    match serverOp with
     | "Register" -> 
-        let username = inpMessage.[1]
-        let password = inpMessage.[2]    
+        let username = msg.[1]
+        let password = msg.[2]    
         client <! "Register,"+username+","+password
-        readInput()
+        getOperation()
     | "Login" -> 
-        let username = inpMessage.[1]
-        let password = inpMessage.[2]    
+        let username = msg.[1]
+        let password = msg.[2]    
         client <! "Login,"+username+","+password
-        readInput()
+        getOperation()
     | "Subscribe" ->
-        let username = inpMessage.[1] 
+        let username = msg.[1] 
         client <! "Subscribe,"+username
-        readInput()
+        getOperation()
     | "Tweet" ->
-        let message = inpMessage.[1] 
+        let message = msg.[1] 
         client <! "Tweet,"+message
-        readInput()
+        getOperation()
     | "Query" ->
-        client <! "Querying"
-        readInput()
+        client <! "QueryFeed"
+        getOperation()
     | "QueryHashtag" ->
-        client <! "QueryHashtags,"+inpMessage.[1]
-        readInput()
+        client <! "QueryHashtags,"+msg.[1]
+        getOperation()
     | "QueryMention" ->
-        client <! "QueryMentions,"+inpMessage.[1]
-        readInput()
+        client <! "QueryMentions,"+msg.[1]
+        getOperation()
     | "Retweet" ->
-        client <! "Retweet,"+inpMessage.[1]
-        readInput()
+        client <! "Retweet,"+msg.[1]
+        getOperation()
     | "Logout" ->
         client <! "Logout"
-        readInput()
+        getOperation()
     | "Exit" ->
         printfn "Exiting Client!"
     | _ -> 
-        printfn "Invalid Input, Please refer the Report"
-        readInput()
+        printfn "Invalid Input"
+        getOperation()
 
-
-readInput()
+getOperation()
 
 system.Terminate() |> ignore
 0 
